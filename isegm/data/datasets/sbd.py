@@ -86,7 +86,11 @@ class SBDEvaluationDataset(ISDataset):
         instances_mask[instances_mask != instance_id] = 0
         instances_mask[instances_mask > 0] = 1
 
-        return DSample(image, instances_mask, objects_ids=[1], sample_id=index)
+        instance_to_cls = loadmat(str(inst_info_path))['GTinst'][0][0][2]
+        # real class in VOC seg
+        real_class = instance_to_cls[instance_id - 1, 0]
+
+        return DSample(image, instances_mask, objects_ids=[1], sample_id=index, real_class_id=real_class, image_path=image_path)
 
     def get_sbd_images_and_ids_list(self):
         pkl_path = self.dataset_path / f'{self.dataset_split}_images_and_ids_list.pkl'
